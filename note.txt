@@ -1,0 +1,23 @@
+1.
+$ mkdir -p bin
+$ javac -d bin/ src/com/ichano/jniexamples/Hello.java
+
+2.
+$ mkdir -p jni
+$ javah -d jni -classpath bin com.ichano.jniexamples.Hello
+
+3.
+mkdir -p libs
+$ gcc -o libs/libhello.jnilib -lc -shared \
+    -I/System/Library/Frameworks/JavaVM.framework/Headers \
+    jni/com_ichano_jniexamples_Hello.c
+
+On Unix/Linux, compile as:
+gcc -o libs/libhello.so -lc -shared -fPIC -I$JAVA_HOME/include jni/com_ichano_jniexamples_Hello.c
+On Windows, compile as:
+cd libs && cl -I "%JAVA_HOME%/include" -I "%JAVA_HOME%/include/win32" -LD ../jni/com_ichano_jniexamples_Hello.c -Fehello.dll
+
+arm-linux-androideabi-gcc -o libs/libhello.so -lc -shared -fPIC --sysroot="I:/adt-bundle-windows-x86_64-20140702/android-ndk-r10d/platforms/android-8/arch-arm/usr/" -I"I:/adt-bundle-windows-x86_64-20140702/android-ndk-r10d/platforms/android-8/arch-arm/usr/include" -I"I:\adt-bundle-windows-x86_64-20140702\android-ndk-r10d\sources\cxx-stl\gnu-libstdc++\4.9\include" -I"I:\adt-bundle-windows-x86_64-20140702\android-ndk-r10d\sources\cxx-stl\gnu-libstdc++\4.9\libs\armeabi-v7a\include" -ftree-vectorize  -mfpu=neon -O3 -mfloat-abi=softfp -ffast-math -llog jni/com_ichano_jniexamples_Hello.c 
+
+4.
+java -Djava.library.path=libs -classpath bin com.ichano.jniexamples.Hello Student 5
